@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import ProductForm from "./components/ProductForm";
 import SearchBar from "./components/SearchBar";
 import ProductList from "./components/ProductList";
@@ -41,6 +50,13 @@ function App() {
 
     fetchProducts();
   }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleAddProduct = async () => {
     const trimmedName = productName.trim();
@@ -154,6 +170,30 @@ function App() {
     setEditingId(product.id);
   };
 
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+    if (sortOrder !== "manual") return;
+
+    setProducts((prevProducts) => {
+      const oldIndex = prevProducts.findIndex(
+        (product) => product.id === active.id
+      );
+      const newIndex = prevProducts.findIndex(
+        (product) => product.id === over.id
+      );
+
+      if (oldIndex === -1 || newIndex === -1) return prevProducts;
+
+      const updatedProducts = [...prevProducts];
+      const [movedItem] = updatedProducts.splice(oldIndex, 1);
+      updatedProducts.splice(newIndex, 0, movedItem);
+
+      return updatedProducts;
+    });
+  };
+
   const visibleProducts = [...products]
     .filter((product) =>
       product.name.toLowerCase().includes(searchKeyword.toLowerCase())
@@ -251,12 +291,18 @@ function App() {
           </button>
         </div>
 
-        <ProductList
-          filteredProducts={visibleProducts}
-          handleToggleCompleted={handleToggleCompleted}
-          handleDeleteProduct={handleDeleteProduct}
-          handleStartEdit={handleStartEdit}
-        />
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <ProductList
+            filteredProducts={visibleProducts}
+            handleToggleCompleted={handleToggleCompleted}
+            handleDeleteProduct={handleDeleteProduct}
+            handleStartEdit={handleStartEdit}
+          />
+        </DndContext>
       </div>
     </div>
   );

@@ -58,7 +58,6 @@ function ProductItem({
         >
           編集
         </button>
-
         <button
           className="small-button danger"
           onClick={() => handleDeleteProduct(product.id)}
