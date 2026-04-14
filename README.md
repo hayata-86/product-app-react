@@ -85,7 +85,7 @@ APIから取得した商品データ。
 
 # 主な機能
 
-### 商品管理
+## 商品管理
 
 - 商品追加
 - 商品編集
@@ -93,14 +93,14 @@ APIから取得した商品データ。
 - 完了状態管理
 - 完了済み一括削除
 
-### 一覧操作
+## 一覧操作
 
 - 商品検索
 - 状態フィルター
 - 並び替え（昇順 / 降順）
 - Drag & Drop 並び替え
 
-### データ管理
+## データ管理
 
 - REST API連携
 - CSVエクスポート
@@ -109,22 +109,22 @@ APIから取得した商品データ。
 
 # 技術スタック
 
-### Frontend
+## Frontend
 
 - React
 - Vite
 - JavaScript
 - CSS
 
-### Library
+## Library
 
 - dnd-kit (Drag & Drop)
 
-### Backend (Mock API)
+## Backend (Mock API)
 
 - json-server
 
-### Tool
+## Tool
 
 - Git
 - GitHub
@@ -132,3 +132,71 @@ APIから取得した商品データ。
 ---
 
 # ディレクトリ構成
+
+product-app-react
+│
+├ images
+│ ├ home.png
+│ ├ add.png
+│ ├ edit.png
+│ ├ search.png
+│ ├ dnd.png
+│ ├ api-network.png
+│ └ api-response.png
+│
+├ src
+│ ├ components
+│ │ ├ ProductForm.jsx
+│ │ ├ ProductList.jsx
+│ │ ├ ProductItem.jsx
+│ │ ├ SearchBar.jsx
+│ │ ├ FilterBar.jsx
+│ │ └ SortBar.jsx
+│ │
+│ ├ services
+│ │ └ productApi.js
+│ │
+│ ├ utils
+│ │ └ csv.js
+│ │
+│ ├ App.jsx
+│ ├ App.css
+│ └ main.jsx
+
+---
+
+# API エンドポイント
+
+json-server を使用しています。
+
+GET /products
+POST /products
+PATCH /products/:id
+DELETE /products/:id
+
+---
+
+# 起動方法
+
+## 1. 依存関係インストール
+
+npm install
+
+## 4. アクセス
+
+http://localhost:5173
+
+---
+
+# 学習目的
+
+このアプリは以下を学ぶ目的で作成しました。
+
+- Reactによるフロントエンド開発
+- 状態管理
+- API連携
+- UI設計
+- コンポーネント分割
+
+単なる画面作成ではなく  
+**実務を想定したCRUDアプリの実装**を意識しています。
