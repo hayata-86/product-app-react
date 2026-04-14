@@ -133,37 +133,37 @@ APIから取得した商品データ。
 
 # ディレクトリ構成
 
+```
 product-app-react
 │
 ├ images
-│ ├ home.png
-│ ├ add.png
-│ ├ edit.png
-│ ├ search.png
-│ ├ dnd.png
-│ ├ api-network.png
-│ └ api-response.png
+│   ├ home.png
+│   ├ add.png
+│   ├ edit.png
+│   ├ search.png
+│   ├ dnd.png
+│   ├ api-network.png
+│   └ api-response.png
 │
 ├ src
-│ ├ components
-│ │ ├ ProductForm.jsx
-│ │ ├ ProductList.jsx
-│ │ ├ ProductItem.jsx
-│ │ ├ SearchBar.jsx
-│ │ ├ FilterBar.jsx
-│ │ └ SortBar.jsx
-│ │
-│ ├ services
-│ │ └ productApi.js
-│ │
-│ ├ utils
-│ │ └ csv.js
-│ │
-│ ├ App.jsx
-│ ├ App.css
-│ └ main.jsx
-
----
+│   ├ components
+│   │   ├ ProductForm.jsx
+│   │   ├ ProductList.jsx
+│   │   ├ ProductItem.jsx
+│   │   ├ SearchBar.jsx
+│   │   ├ FilterBar.jsx
+│   │   └ SortBar.jsx
+│   │
+│   ├ services
+│   │   └ productApi.js
+│   │
+│   ├ utils
+│   │   └ csv.js
+│   │
+│   ├ App.jsx
+│   ├ App.css
+│   └ main.jsx
+```
 
 # API エンドポイント
 
@@ -180,13 +180,27 @@ DELETE /products/:id
 
 ## 1. 依存関係インストール
 
+```
 npm install
+```
+
+## 2. APIサーバー起動
+
+```
+npx json-server db.json --port 3001
+```
+
+## 3. フロントエンド起動
+
+```
+npm run dev
+```
 
 ## 4. アクセス
 
+```
 http://localhost:5173
-
----
+```
 
 # 学習目的
 
