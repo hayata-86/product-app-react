@@ -1,0 +1,15 @@
+{
+  "products": [
+    {
+      "name": "bb",
+      "completed": false,
+      "id": "_TrCFBxwoOA"
+    },
+    {
+      "name": "ddd",
+      "completed": false,
+      "id": "bExCwqbcUtQ"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
