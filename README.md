@@ -1,3 +1,15 @@
+## 概要
+
+商品情報を管理するためのシンプルな CRUD アプリケーションです。  
+React を用いたフロントエンド開発の学習として作成しました。
+
+実務を想定し、以下の機能を実装しています。
+
+- REST APIによるデータ取得・更新
+- 商品検索 / フィルタリング
+- Drag & Dropによる並び替え
+- CSVエクスポート
+
 # Product Management App (React)
 
 React + Vite で作成した商品管理アプリです。
@@ -164,6 +176,40 @@ product-app-react
 │   ├ App.css
 │   └ main.jsx
 ```
+
+# アーキテクチャ
+
+フロントエンドとAPIを分離した構成で開発しています。
+
+React
+↓
+API通信 (fetch)
+↓
+json-server
+↓
+db.json
+
+Reactは API を通して商品データを取得・更新します。
+
+# 工夫したポイント
+
+## コンポーネント分割
+
+UIを再利用しやすいよう、役割ごとにコンポーネントを分割しました。
+
+- ProductForm
+- ProductList
+- ProductItem
+- SearchBar
+- FilterBar
+- SortBar
+
+---
+
+## API処理の分離
+
+API通信ロジックを `services` フォルダに分離しました。
+
 
 # API エンドポイント
 
