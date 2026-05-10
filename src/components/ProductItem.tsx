@@ -1,12 +1,30 @@
+import React from "react";
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+import type { CSSProperties } from "react";
+import type { Product } from "../types/Product.ts";
+
+type ProductItemProps = {
+  product: Product;
+  handleToggleCompleted: (
+    id: string
+  ) => void;
+  handleDeleteProduct: (
+    id: string
+  ) => void;
+  handleStartEdit: (
+    product: Product
+  ) => void;
+};
 
 function ProductItem({
   product,
   handleToggleCompleted,
   handleDeleteProduct,
   handleStartEdit,
-}) {
+}: ProductItemProps) {
   const {
     attributes,
     listeners,
@@ -14,10 +32,14 @@ function ProductItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: product.id });
+  } = useSortable({
+    id: product.id,
+  });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
+  const style: CSSProperties = {
+    transform: CSS.Transform.toString(
+      transform
+    ),
     transition,
   };
 
@@ -25,7 +47,11 @@ function ProductItem({
     <li
       ref={setNodeRef}
       style={style}
-      className={isDragging ? "product-item dragging" : "product-item"}
+      className={
+        isDragging
+          ? "product-item dragging"
+          : "product-item"
+      }
     >
       <div className="product-main">
         <button
@@ -42,11 +68,21 @@ function ProductItem({
           <input
             type="checkbox"
             checked={product.completed}
-            onChange={() => handleToggleCompleted(product.id)}
+            onChange={() =>
+              handleToggleCompleted(
+                product.id
+              )
+            }
           />
         </label>
 
-        <span className={product.completed ? "product-name completed" : "product-name"}>
+        <span
+          className={
+            product.completed
+              ? "product-name completed"
+              : "product-name"
+          }
+        >
           {product.name}
         </span>
       </div>
@@ -54,13 +90,20 @@ function ProductItem({
       <div className="product-actions">
         <button
           className="small-button"
-          onClick={() => handleStartEdit(product)}
+          onClick={() =>
+            handleStartEdit(product)
+          }
         >
           編集
         </button>
+
         <button
           className="small-button danger"
-          onClick={() => handleDeleteProduct(product.id)}
+          onClick={() =>
+            handleDeleteProduct(
+              product.id
+            )
+          }
         >
           削除
         </button>
@@ -69,4 +112,4 @@ function ProductItem({
   );
 }
 
-export default ProductItem;
+export default React.memo(ProductItem);
