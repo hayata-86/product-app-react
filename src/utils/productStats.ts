@@ -1,4 +1,4 @@
-import type { Product } from "../types/Product.ts";
+import type { Product } from "../types/Product.js";
 
 export type ProductStats = {
   totalCount: number;
