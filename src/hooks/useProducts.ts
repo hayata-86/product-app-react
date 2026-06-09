@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import type { Product } from "../types/Product.ts";
 
@@ -12,48 +17,103 @@ import {
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] =
-    useState<boolean>(false);
-  const [errorMessage, setErrorMessage] =
-    useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      setErrorMessage("");
+    if (data) {
+      setProducts(data);
+    }
+  }, [data]);
 
-      try {
-        const data = await getProducts();
-        setProducts(data);
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "商品一覧の取得に失敗しました";
+  const addMutation = useMutation({
+    mutationFn: createProduct,
+    onSuccess: (savedProduct) => {
+      setProducts((prevProducts) => [
+        ...prevProducts,
+        savedProduct,
+      ]);
 
-        setErrorMessage(message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+  });
 
-    fetchProducts();
-  }, []);
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Partial<Product>;
+    }) => updateProduct(id, updates),
+
+    onSuccess: (updatedProduct) => {
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === updatedProduct.id
+            ? updatedProduct
+            : product
+        )
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteProduct,
+
+    onSuccess: (_, deletedId) => {
+      setProducts((prevProducts) =>
+        prevProducts.filter(
+          (product) => product.id !== deletedId
+        )
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+  });
+
+  const clearCompletedMutation = useMutation({
+    mutationFn: deleteCompletedProducts,
+
+    onSuccess: () => {
+      setProducts((prevProducts) =>
+        prevProducts.filter(
+          (product) => !product.completed
+        )
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ["products"],
+      });
+    },
+  });
+
+  const queryErrorMessage =
+    error instanceof Error ? error.message : "";
 
   const addProduct = async (
     name: string
   ): Promise<Product | null> => {
     try {
       const savedProduct =
-        await createProduct({
+        await addMutation.mutateAsync({
           name,
           completed: false,
         });
-
-      setProducts((prevProducts) => [
-        ...prevProducts,
-        savedProduct,
-      ]);
 
       return savedProduct;
     } catch (error) {
@@ -74,17 +134,12 @@ export function useProducts() {
   ): Promise<Product | null> => {
     try {
       const updatedProduct =
-        await updateProduct(id, {
-          name,
+        await updateMutation.mutateAsync({
+          id,
+          updates: {
+            name,
+          },
         });
-
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === id
-            ? updatedProduct
-            : product
-        )
-      );
 
       return updatedProduct;
     } catch (error) {
@@ -103,13 +158,7 @@ export function useProducts() {
     id: string
   ): Promise<void> => {
     try {
-      await deleteProduct(id);
-
-      setProducts((prevProducts) =>
-        prevProducts.filter(
-          (product) => product.id !== id
-        )
-      );
+      await deleteMutation.mutateAsync(id);
     } catch (error) {
       const message =
         error instanceof Error
@@ -130,19 +179,12 @@ export function useProducts() {
     if (!targetProduct) return;
 
     try {
-      const updatedProduct =
-        await updateProduct(id, {
-          completed:
-            !targetProduct.completed,
-        });
-
-      setProducts((prevProducts) =>
-        prevProducts.map((product) =>
-          product.id === id
-            ? updatedProduct
-            : product
-        )
-      );
+      await updateMutation.mutateAsync({
+        id,
+        updates: {
+          completed: !targetProduct.completed,
+        },
+      });
     } catch (error) {
       const message =
         error instanceof Error
@@ -153,68 +195,41 @@ export function useProducts() {
     }
   };
 
-  const clearCompleted =
-    async (): Promise<void> => {
-      try {
-        await deleteCompletedProducts(
-          products
-        );
+  const clearCompleted = async (): Promise<void> => {
+    try {
+      await clearCompletedMutation.mutateAsync(products);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "完了済み商品の削除に失敗しました";
 
-        setProducts((prevProducts) =>
-          prevProducts.filter(
-            (product) =>
-              !product.completed
-          )
-        );
-      } catch (error) {
-        const message =
-          error instanceof Error
-            ? error.message
-            : "完了済み商品の削除に失敗しました";
-
-        setErrorMessage(message);
-      }
-    };
+      setErrorMessage(message);
+    }
+  };
 
   const reorderProducts = (
     activeId: string,
     overId: string
   ): void => {
     setProducts((prevProducts) => {
-      const oldIndex =
-        prevProducts.findIndex(
-          (product) =>
-            product.id === activeId
-        );
+      const oldIndex = prevProducts.findIndex(
+        (product) => product.id === activeId
+      );
 
-      const newIndex =
-        prevProducts.findIndex(
-          (product) =>
-            product.id === overId
-        );
+      const newIndex = prevProducts.findIndex(
+        (product) => product.id === overId
+      );
 
-      if (
-        oldIndex === -1 ||
-        newIndex === -1
-      ) {
+      if (oldIndex === -1 || newIndex === -1) {
         return prevProducts;
       }
 
-      const updatedProducts = [
-        ...prevProducts,
-      ];
+      const updatedProducts = [...prevProducts];
 
-      const [movedItem] =
-        updatedProducts.splice(
-          oldIndex,
-          1
-        );
+      const [movedItem] = updatedProducts.splice(oldIndex, 1);
 
-      updatedProducts.splice(
-        newIndex,
-        0,
-        movedItem
-      );
+      updatedProducts.splice(newIndex, 0, movedItem);
 
       return updatedProducts;
     });
@@ -223,7 +238,7 @@ export function useProducts() {
   return {
     products,
     isLoading,
-    errorMessage,
+    errorMessage: errorMessage || queryErrorMessage,
     addProduct,
     editProduct,
     removeProduct,
