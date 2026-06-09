@@ -1,8 +1,4 @@
-import type {
-  Product,
-  StatusFilter,
-  SortOrder,
-} from "../types/Product.ts";
+import type { Product, StatusFilter, SortOrder } from "../types/Product.ts";
 
 export function getVisibleProducts(
   products: Product[],

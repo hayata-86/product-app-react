@@ -65,7 +65,10 @@ input {
   border-radius: 10px;
   background: #ffffff;
   color: #0f172a;
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background-color 0.2s;
 }
 
 .text-input::placeholder {
@@ -97,7 +100,10 @@ input {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: transform 0.12s ease, background-color 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.12s ease,
+    background-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .primary-button:hover,

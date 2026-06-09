@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { Product } from "../types/Product.ts";
 
@@ -35,10 +31,7 @@ export function useProducts() {
   const addMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: (savedProduct) => {
-      setProducts((prevProducts) => [
-        ...prevProducts,
-        savedProduct,
-      ]);
+      setProducts((prevProducts) => [...prevProducts, savedProduct]);
 
       queryClient.invalidateQueries({
         queryKey: ["products"],
@@ -47,20 +40,13 @@ export function useProducts() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({
-      id,
-      updates,
-    }: {
-      id: string;
-      updates: Partial<Product>;
-    }) => updateProduct(id, updates),
+    mutationFn: ({ id, updates }: { id: string; updates: Partial<Product> }) =>
+      updateProduct(id, updates),
 
     onSuccess: (updatedProduct) => {
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
-          product.id === updatedProduct.id
-            ? updatedProduct
-            : product
+          product.id === updatedProduct.id ? updatedProduct : product
         )
       );
 
@@ -75,9 +61,7 @@ export function useProducts() {
 
     onSuccess: (_, deletedId) => {
       setProducts((prevProducts) =>
-        prevProducts.filter(
-          (product) => product.id !== deletedId
-        )
+        prevProducts.filter((product) => product.id !== deletedId)
       );
 
       queryClient.invalidateQueries({
@@ -91,9 +75,7 @@ export function useProducts() {
 
     onSuccess: () => {
       setProducts((prevProducts) =>
-        prevProducts.filter(
-          (product) => !product.completed
-        )
+        prevProducts.filter((product) => !product.completed)
       );
 
       queryClient.invalidateQueries({
@@ -102,25 +84,19 @@ export function useProducts() {
     },
   });
 
-  const queryErrorMessage =
-    error instanceof Error ? error.message : "";
+  const queryErrorMessage = error instanceof Error ? error.message : "";
 
-  const addProduct = async (
-    name: string
-  ): Promise<Product | null> => {
+  const addProduct = async (name: string): Promise<Product | null> => {
     try {
-      const savedProduct =
-        await addMutation.mutateAsync({
-          name,
-          completed: false,
-        });
+      const savedProduct = await addMutation.mutateAsync({
+        name,
+        completed: false,
+      });
 
       return savedProduct;
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "商品の追加に失敗しました";
+        error instanceof Error ? error.message : "商品の追加に失敗しました";
 
       setErrorMessage(message);
 
@@ -133,20 +109,17 @@ export function useProducts() {
     name: string
   ): Promise<Product | null> => {
     try {
-      const updatedProduct =
-        await updateMutation.mutateAsync({
-          id,
-          updates: {
-            name,
-          },
-        });
+      const updatedProduct = await updateMutation.mutateAsync({
+        id,
+        updates: {
+          name,
+        },
+      });
 
       return updatedProduct;
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "商品の更新に失敗しました";
+        error instanceof Error ? error.message : "商品の更新に失敗しました";
 
       setErrorMessage(message);
 
@@ -154,27 +127,19 @@ export function useProducts() {
     }
   };
 
-  const removeProduct = async (
-    id: string
-  ): Promise<void> => {
+  const removeProduct = async (id: string): Promise<void> => {
     try {
       await deleteMutation.mutateAsync(id);
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "商品の削除に失敗しました";
+        error instanceof Error ? error.message : "商品の削除に失敗しました";
 
       setErrorMessage(message);
     }
   };
 
-  const toggleCompleted = async (
-    id: string
-  ): Promise<void> => {
-    const targetProduct = products.find(
-      (product) => product.id === id
-    );
+  const toggleCompleted = async (id: string): Promise<void> => {
+    const targetProduct = products.find((product) => product.id === id);
 
     if (!targetProduct) return;
 
@@ -187,9 +152,7 @@ export function useProducts() {
       });
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : "完了状態の更新に失敗しました";
+        error instanceof Error ? error.message : "完了状態の更新に失敗しました";
 
       setErrorMessage(message);
     }
@@ -208,10 +171,7 @@ export function useProducts() {
     }
   };
 
-  const reorderProducts = (
-    activeId: string,
-    overId: string
-  ): void => {
+  const reorderProducts = (activeId: string, overId: string): void => {
     setProducts((prevProducts) => {
       const oldIndex = prevProducts.findIndex(
         (product) => product.id === activeId

@@ -8,15 +8,9 @@ import type { Product } from "../types/Product.ts";
 
 type ProductItemProps = {
   product: Product;
-  handleToggleCompleted: (
-    id: string
-  ) => void;
-  handleDeleteProduct: (
-    id: string
-  ) => void;
-  handleStartEdit: (
-    product: Product
-  ) => void;
+  handleToggleCompleted: (id: string) => void;
+  handleDeleteProduct: (id: string) => void;
+  handleStartEdit: (product: Product) => void;
 };
 
 function ProductItem({
@@ -37,9 +31,7 @@ function ProductItem({
   });
 
   const style: CSSProperties = {
-    transform: CSS.Transform.toString(
-      transform
-    ),
+    transform: CSS.Transform.toString(transform),
     transition,
   };
 
@@ -47,11 +39,7 @@ function ProductItem({
     <li
       ref={setNodeRef}
       style={style}
-      className={
-        isDragging
-          ? "product-item dragging"
-          : "product-item"
-      }
+      className={isDragging ? "product-item dragging" : "product-item"}
     >
       <div className="product-main">
         <button
@@ -68,19 +56,13 @@ function ProductItem({
           <input
             type="checkbox"
             checked={product.completed}
-            onChange={() =>
-              handleToggleCompleted(
-                product.id
-              )
-            }
+            onChange={() => handleToggleCompleted(product.id)}
           />
         </label>
 
         <span
           className={
-            product.completed
-              ? "product-name completed"
-              : "product-name"
+            product.completed ? "product-name completed" : "product-name"
           }
         >
           {product.name}
@@ -90,20 +72,14 @@ function ProductItem({
       <div className="product-actions">
         <button
           className="small-button"
-          onClick={() =>
-            handleStartEdit(product)
-          }
+          onClick={() => handleStartEdit(product)}
         >
           編集
         </button>
 
         <button
           className="small-button danger"
-          onClick={() =>
-            handleDeleteProduct(
-              product.id
-            )
-          }
+          onClick={() => handleDeleteProduct(product.id)}
         >
           削除
         </button>

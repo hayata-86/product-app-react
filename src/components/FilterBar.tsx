@@ -4,22 +4,15 @@ import type { StatusFilter } from "../types/Product.ts";
 
 type FilterBarProps = {
   statusFilter: StatusFilter;
-  setStatusFilter: React.Dispatch<
-    React.SetStateAction<StatusFilter>
-  >;
+  setStatusFilter: React.Dispatch<React.SetStateAction<StatusFilter>>;
 };
 
-function FilterBar({
-  statusFilter,
-  setStatusFilter,
-}: FilterBarProps) {
+function FilterBar({ statusFilter, setStatusFilter }: FilterBarProps) {
   return (
     <div className="button-group">
       <button
         className={
-          statusFilter === "all"
-            ? "filter-button active"
-            : "filter-button"
+          statusFilter === "all" ? "filter-button active" : "filter-button"
         }
         onClick={() => setStatusFilter("all")}
       >
@@ -28,9 +21,7 @@ function FilterBar({
 
       <button
         className={
-          statusFilter === "active"
-            ? "filter-button active"
-            : "filter-button"
+          statusFilter === "active" ? "filter-button active" : "filter-button"
         }
         onClick={() => setStatusFilter("active")}
       >

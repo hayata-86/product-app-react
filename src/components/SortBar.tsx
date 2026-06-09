@@ -4,22 +4,15 @@ import type { SortOrder } from "../types/Product.ts";
 
 type SortBarProps = {
   sortOrder: SortOrder;
-  setSortOrder: React.Dispatch<
-    React.SetStateAction<SortOrder>
-  >;
+  setSortOrder: React.Dispatch<React.SetStateAction<SortOrder>>;
 };
 
-function SortBar({
-  sortOrder,
-  setSortOrder,
-}: SortBarProps) {
+function SortBar({ sortOrder, setSortOrder }: SortBarProps) {
   return (
     <div className="button-group">
       <button
         className={
-          sortOrder === "manual"
-            ? "filter-button active"
-            : "filter-button"
+          sortOrder === "manual" ? "filter-button active" : "filter-button"
         }
         onClick={() => setSortOrder("manual")}
       >
@@ -28,9 +21,7 @@ function SortBar({
 
       <button
         className={
-          sortOrder === "asc"
-            ? "filter-button active"
-            : "filter-button"
+          sortOrder === "asc" ? "filter-button active" : "filter-button"
         }
         onClick={() => setSortOrder("asc")}
       >
@@ -39,9 +30,7 @@ function SortBar({
 
       <button
         className={
-          sortOrder === "desc"
-            ? "filter-button active"
-            : "filter-button"
+          sortOrder === "desc" ? "filter-button active" : "filter-button"
         }
         onClick={() => setSortOrder("desc")}
       >

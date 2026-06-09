@@ -1,8 +1,4 @@
-import type {
-  Product,
-  NewProduct,
-  ProductUpdate,
-} from "../types/Product.ts";
+import type { Product, NewProduct, ProductUpdate } from "../types/Product.ts";
 import { request } from "./apiClient";
 
 const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/products`;
@@ -15,9 +11,7 @@ export const getProducts = async (): Promise<Product[]> => {
   );
 };
 
-export const createProduct = async (
-  product: NewProduct
-): Promise<Product> => {
+export const createProduct = async (product: NewProduct): Promise<Product> => {
   return request<Product>(
     BASE_URL,
     {
@@ -48,9 +42,7 @@ export const updateProduct = async (
   );
 };
 
-export const deleteProduct = async (
-  id: string
-): Promise<void> => {
+export const deleteProduct = async (id: string): Promise<void> => {
   return request<void>(
     `${BASE_URL}/${id}`,
     {
@@ -69,4 +61,3 @@ export const deleteCompletedProducts = async (
     completedProducts.map((product) => deleteProduct(product.id))
   );
 };
-

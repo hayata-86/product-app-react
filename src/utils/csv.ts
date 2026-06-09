@@ -1,8 +1,6 @@
 import type { Product } from "../types/Product.ts";
 
-export function exportProductsToCSV(
-  products: Product[]
-): void {
+export function exportProductsToCSV(products: Product[]): void {
   const header: string[] = ["ID", "商品名", "完了状態"];
 
   const rows: string[][] = products.map((product) => [
@@ -13,11 +11,7 @@ export function exportProductsToCSV(
 
   const csvContent = [header, ...rows]
     .map((row) =>
-      row
-        .map((cell) =>
-          `"${String(cell).replace(/"/g, '""')}"`
-        )
-        .join(",")
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")
     )
     .join("\n");
 

@@ -1,8 +1,4 @@
-import type {
-  Product,
-  StatusFilter,
-  SortOrder,
-} from "./types/Product.ts";
+import type { Product, StatusFilter, SortOrder } from "./types/Product.ts";
 
 import { useCallback, useMemo, useState } from "react";
 import "./App.css";
@@ -90,15 +86,11 @@ function App() {
   );
 
   const handleClearCompleted = useCallback(async (): Promise<void> => {
-    const completedProducts = products.filter(
-      (product) => product.completed
-    );
+    const completedProducts = products.filter((product) => product.completed);
 
     if (completedProducts.length === 0) return;
 
-    const editingProduct = products.find(
-      (product) => product.id === editingId
-    );
+    const editingProduct = products.find((product) => product.id === editingId);
 
     await clearCompleted();
 
@@ -133,29 +125,14 @@ function App() {
   );
 
   const visibleProducts = useMemo(
-    () =>
-      getVisibleProducts(
-        products,
-        searchKeyword,
-        statusFilter,
-        sortOrder
-      ),
+    () => getVisibleProducts(products, searchKeyword, statusFilter, sortOrder),
     [products, searchKeyword, statusFilter, sortOrder]
   );
 
-  const {
-  totalCount,
-  completedCount,
-  activeCount,
-  visibleCount,
-} = useMemo(
-  () =>
-    getProductStats(
-      products,
-      visibleProducts
-    ),
-  [products, visibleProducts]
-);
+  const { totalCount, completedCount, activeCount, visibleCount } = useMemo(
+    () => getProductStats(products, visibleProducts),
+    [products, visibleProducts]
+  );
 
   return (
     <div className="app">
