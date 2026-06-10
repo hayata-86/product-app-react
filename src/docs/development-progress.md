@@ -1,96 +1,243 @@
 # 開発進捗ドキュメント
 
-## 概要
+## プロジェクト概要
 
-React + Vite 商品管理アプリに対して、TypeScript移行、構成改善、React Query導入、ESLint / Prettier導入、Testing Library導入を実施した。
+React + Vite を利用した商品管理アプリを開発している。
 
----
-
-## 完了済み作業
-
-### 1. TypeScript移行
-
-- JavaScript から TypeScript へ移行
-- `.jsx` を `.tsx` へ変更
-- `.js` を `.ts` へ変更
-- `Product` 型を定義
-- `StatusFilter` / `SortOrder` 型を定義
-- Props型を各コンポーネントに追加
-
-### 2. 構成改善
-
-- `useProducts.ts` を作成
-- 商品取得・追加・更新・削除ロジックを custom hook に分離
-- `productApi.ts` にAPI処理を集約
-- `apiClient.ts` にfetch共通処理を作成
-- `productFilter.ts` に検索・フィルター・ソート処理を分離
-- `productStats.ts` に件数計算処理を分離
-
-### 3. パフォーマンス改善
-
-- `useMemo` による表示商品一覧のメモ化
-- `useMemo` による件数計算のメモ化
-- `useCallback` によるイベント関数のメモ化
-- `React.memo` によるコンポーネント再描画抑制
-
-### 4. React Query導入
-
-- `@tanstack/react-query` を導入
-- `QueryClientProvider` を設定
-- 商品一覧取得を `useQuery` 化
-- 商品追加・更新・削除を `useMutation` 化
-
-### 5. ESLint / Prettier導入
-
-- ESLintを導入
-- Prettierを導入
-- `npm run lint` を追加
-- `npm run format` を追加
-- lintエラーなしを確認
-
-### 6. Testing Library導入
-
-- Vitestを導入
-- Testing Libraryを導入
-- jsdomを設定
-- `setup.ts` を作成
-- `ProductForm.test.tsx` を作成
-- 入力欄のテストを追加
-- 追加ボタンクリックのテストを追加
+当初は JavaScript を用いたシンプルな CRUD アプリとして構築したが、実務で利用される技術や設計手法を学習することを目的として、継続的な改善を実施している。
 
 ---
 
-## 現在の状態
+# 実施した改善内容
 
-現在、以下の技術構成まで完了している。
+## 1. TypeScript移行
 
-- React
-- TypeScript
-- Vite
-- React Query
-- ESLint
-- Prettier
-- Vitest
-- Testing Library
-- @dnd-kit
-- json-server
+### 課題
+
+JavaScriptでは型の定義がなく、実行時まで不具合に気付きにくい。
+
+コンポーネント間のデータ受け渡しも明確ではなく、保守性に課題があった。
+
+### 対応
+
+* TypeScript導入
+* JSX → TSX移行
+* Product型作成
+* StatusFilter型作成
+* SortOrder型作成
+* Props型定義追加
+
+### 効果
+
+* 型安全性向上
+* コンパイル時のエラー検出
+* コード補完強化
+* 保守性向上
 
 ---
 
-## 次に実施予定
+## 2. 責務分離
 
-### テスト追加
+### 課題
 
-- `SearchBar.test.tsx`
-- `FilterBar.test.tsx`
-- `SortBar.test.tsx`
-- `productFilter.test.ts`
-- `productStats.test.ts`
+App.tsx に以下の処理が集中していた。
 
-### 今後の改善候補
+* 画面表示
+* API通信
+* 商品操作
+* フィルタリング
+* 件数計算
 
-- Zustand導入
-- テストカバレッジ拡充
-- エラー表示コンポーネント化
-- Loading表示コンポーネント化
-- 設計改善ドキュメント作成
+ファイルの肥大化により可読性が低下していた。
+
+### 対応
+
+#### useProducts.ts
+
+商品取得・追加・更新・削除処理を集約
+
+#### productApi.ts
+
+API通信処理を集約
+
+#### apiClient.ts
+
+fetch処理を共通化
+
+#### productFilter.ts
+
+検索・フィルタ・ソート処理を分離
+
+#### productStats.ts
+
+件数計算処理を分離
+
+### 効果
+
+* App.tsxの簡素化
+* 保守性向上
+* 再利用性向上
+* 変更影響範囲の明確化
+
+---
+
+## 3. パフォーマンス改善
+
+### 課題
+
+再描画時に不要な再計算が発生していた。
+
+### 対応
+
+* useMemo導入
+* useCallback導入
+* React.memo導入
+
+### 効果
+
+* 不要な再計算削減
+* 不要な再描画削減
+* 大規模化への備え
+
+---
+
+## 4. React Query導入
+
+### 課題
+
+API取得・更新処理を独自実装しており、データ管理が複雑化していた。
+
+### 対応
+
+* React Query導入
+* QueryClientProvider設定
+* useQuery導入
+* useMutation導入
+
+### 効果
+
+* API管理簡素化
+* キャッシュ利用
+* データ同期改善
+* 保守性向上
+
+---
+
+## 5. 品質向上
+
+### ESLint導入
+
+#### 目的
+
+コード品質の維持
+
+#### 効果
+
+* 潜在的不具合の検出
+* コーディングルール統一
+
+---
+
+### Prettier導入
+
+#### 目的
+
+コードフォーマット統一
+
+#### 効果
+
+* コードレビュー効率向上
+* 可読性向上
+
+---
+
+## 6. 自動テスト導入
+
+### 導入技術
+
+* Vitest
+* Testing Library
+
+### テスト対象
+
+#### コンポーネント
+
+* ProductForm
+* SearchBar
+* FilterBar
+* SortBar
+
+#### Utility
+
+* productFilter
+* productStats
+
+### 実施内容
+
+* 入力処理テスト
+* ボタンクリックテスト
+* フィルタリングテスト
+* ソートテスト
+* 件数計算テスト
+
+### 結果
+
+* テストファイル数：6
+* テストケース数：15
+* 成功率：100%
+
+---
+
+# 現在の技術スタック
+
+## フロントエンド
+
+* React
+* TypeScript
+* Vite
+
+## 状態管理・データ取得
+
+* React Query
+
+## UI機能
+
+* DnD Kit
+
+## APIモック
+
+* json-server
+
+## 品質管理
+
+* ESLint
+* Prettier
+
+## テスト
+
+* Vitest
+* Testing Library
+
+---
+
+# 今後の改善計画
+
+## 短期
+
+* ログイン機能追加
+* ログアウト機能追加
+* 認証状態管理
+
+## 中期
+
+* React Hook Form導入
+* Zod導入
+* バリデーション強化
+
+## 長期
+
+* Spring Boot API連携
+* PostgreSQL導入
+* AWS環境へのデプロイ
+* ユーザーごとの商品管理機能
+* 権限制御機能
