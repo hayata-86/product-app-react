@@ -24,6 +24,9 @@ import SortBar from "./components/SortBar";
 import { exportProductsToCSV } from "./utils/csv";
 import { useProducts } from "./hooks/useProducts";
 import { getProductStats } from "./utils/productStats";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
   const [productName, setProductName] = useState<string>("");
@@ -31,6 +34,10 @@ function App() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortOrder, setSortOrder] = useState<SortOrder>("manual");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+
+  const { user, isLoggedIn, authErrorMessage, login, register, logout } =
+    useAuth();
 
   const {
     products,
@@ -134,10 +141,38 @@ function App() {
     [products, visibleProducts]
   );
 
+  if (!isLoggedIn) {
+    if (authMode === "register") {
+      return (
+        <RegisterForm
+          authErrorMessage={authErrorMessage}
+          register={register}
+          onSwitchToLogin={() => setAuthMode("login")}
+        />
+      );
+    }
+
+    return (
+      <LoginForm
+        authErrorMessage={authErrorMessage}
+        login={login}
+        onSwitchToRegister={() => setAuthMode("register")}
+      />
+    );
+  }
+
   return (
     <div className="app">
       <div className="container">
         <h1 className="title">商品管理アプリ</h1>
+
+        <div className="user-row">
+          <span>{user?.name} さんでログイン中</span>
+
+          <button className="secondary-button" onClick={logout}>
+            ログアウト
+          </button>
+        </div>
 
         {isLoading && (
           <p className="info-message">商品一覧を読み込み中です...</p>
