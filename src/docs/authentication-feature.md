@@ -49,7 +49,7 @@
 
 ### 画面イメージ
 
-![ログイン画面](./images/login-screen.png)
+![ログイン画面](../images/login-screen.png)
 
 ログイン画面を作成し、登録済みユーザー情報との照合を実施した。
 
@@ -68,7 +68,7 @@
 
 ### 画面イメージ
 
-![新規登録画面](./images/register-screen.png)
+![新規登録画面](../images/register-screen.png)
 
 ユーザー自身でアカウント作成ができる機能を追加した。
 
