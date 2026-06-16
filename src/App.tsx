@@ -49,7 +49,7 @@ function App() {
     toggleCompleted,
     clearCompleted,
     reorderProducts,
-  } = useProducts();
+  } = useProducts(user?.id ?? "");;
 
   const sensors = useSensors(
     useSensor(PointerSensor),

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import type { Product } from "../types/Product.ts";
 
@@ -11,39 +15,53 @@ import {
   deleteCompletedProducts,
 } from "../services/productApi";
 
-export function useProducts() {
+export function useProducts(userId: string) {
   const [products, setProducts] = useState<Product[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["products"],
+    queryKey: ["products", userId],
     queryFn: getProducts,
+    enabled: userId !== "",
   });
 
   useEffect(() => {
     if (data) {
-      setProducts(data);
+      const loginUserProducts = data.filter(
+        (product) => product.userId === userId
+      );
+
+      setProducts(loginUserProducts);
     }
-  }, [data]);
+  }, [data, userId]);
 
   const addMutation = useMutation({
     mutationFn: createProduct,
     onSuccess: (savedProduct) => {
+      if (savedProduct.userId !== userId) return;
+
       setProducts((prevProducts) => [...prevProducts, savedProduct]);
 
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["products", userId],
       });
     },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: Partial<Product> }) =>
-      updateProduct(id, updates),
+    mutationFn: ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Partial<Product>;
+    }) => updateProduct(id, updates),
 
     onSuccess: (updatedProduct) => {
+      if (updatedProduct.userId !== userId) return;
+
       setProducts((prevProducts) =>
         prevProducts.map((product) =>
           product.id === updatedProduct.id ? updatedProduct : product
@@ -51,7 +69,7 @@ export function useProducts() {
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["products", userId],
       });
     },
   });
@@ -65,7 +83,7 @@ export function useProducts() {
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["products", userId],
       });
     },
   });
@@ -79,7 +97,7 @@ export function useProducts() {
       );
 
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["products", userId],
       });
     },
   });
@@ -89,6 +107,7 @@ export function useProducts() {
   const addProduct = async (name: string): Promise<Product | null> => {
     try {
       const savedProduct = await addMutation.mutateAsync({
+        userId,
         name,
         completed: false,
       });
