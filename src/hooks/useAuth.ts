@@ -63,9 +63,18 @@ export function useAuth() {
   const login = (email: string, password: string): boolean => {
     setAuthErrorMessage("");
 
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (trimmedEmail === "" || trimmedPassword === "") {
+      setAuthErrorMessage("メールアドレスとパスワードを入力してください");
+      return false;
+    }
+
     const foundUser = users.find(
       (registeredUser) =>
-        registeredUser.email === email && registeredUser.password === password
+        registeredUser.email === trimmedEmail &&
+        registeredUser.password === trimmedPassword
     );
 
     if (!foundUser) {
@@ -89,13 +98,27 @@ export function useAuth() {
   ): boolean => {
     setAuthErrorMessage("");
 
-    if (name.trim() === "" || email.trim() === "" || password.trim() === "") {
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    if (trimmedName === "" || trimmedEmail === "" || trimmedPassword === "") {
       setAuthErrorMessage("すべての項目を入力してください");
       return false;
     }
 
+    if (!trimmedEmail.includes("@")) {
+      setAuthErrorMessage("メールアドレスの形式が正しくありません");
+      return false;
+    }
+
+    if (trimmedPassword.length < 8) {
+      setAuthErrorMessage("パスワードは8文字以上で入力してください");
+      return false;
+    }
+
     const exists = users.some(
-      (registeredUser) => registeredUser.email === email
+      (registeredUser) => registeredUser.email === trimmedEmail
     );
 
     if (exists) {
@@ -103,23 +126,23 @@ export function useAuth() {
       return false;
     }
 
-    const newUser: RegisteredUser = {
-      id: String(Date.now()),
-      name,
-      email,
-      password,
-    };
-
-    setUsers((prevUsers) => [...prevUsers, newUser]);
-
-    setUser({
-      id: newUser.id,
-      name: newUser.name,
-      email: newUser.email,
-    });
-
-    return true;
+  const newUser: RegisteredUser = {
+    id: String(Date.now()),
+    name: trimmedName,
+    email: trimmedEmail,
+    password: trimmedPassword,
   };
+
+  setUsers((prevUsers) => [...prevUsers, newUser]);
+
+  setUser({
+    id: newUser.id,
+    name: newUser.name,
+    email: newUser.email,
+  });
+
+  return true;
+};
 
   const logout = (): void => {
     setUser(null);
